@@ -9,9 +9,7 @@ Must Compile and Execute 'pass1.c' before executing this
 
 void display();
 
-// itoa manual implementation as its not ANSI Standard
-//start of itoa block
-// Function to swap two numbers
+
 void swap(char *x, char *y) {
     char t = *x; *x = *y; *y = t;
 }
@@ -57,9 +55,7 @@ char* itoa(int value, char* buffer, int base)
         buffer[i++] = '0';
     }
  
-    // If the base is 10 and the value is negative, the resulting string
-    // is preceded with a minus sign (-)
-    // With any other base, value is always considered unsigned
+   
     if (value < 0 && base == 10) {
         buffer[i++] = '-';
     }
