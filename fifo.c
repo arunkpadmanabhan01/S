@@ -1,167 +1,76 @@
-
-//fifo
-
-#include<stdio.h>
-
-void fifo(int string[20],int n,int size)
+#include <stdio.h>
+void main()
 {
-    //Creating array for block storage
-    int frames[n];
-    //Initializing each block with -1
-    for (int i=0;i<n;i++)
-        frames[i]=-1;
-
-    //Index to insert element
-    int index=-1;
-
-    //Counters
-    int page_miss=0;
-    int page_hits=0;
-
-    //Traversing each symbol in fifo
-    for (int i=0;i<size;i++)
-    {
-        int symbol=string[i];
-        int flag=0;
-
-        for(int j=0;j<n;j++)
-        {
-            if (symbol==frames[j])
-            {
-                flag=1;
-                break;
-            }
-        }
-
-        if (flag==1)
-        {
-            printf("\nSymbol: %d  Frame: ",symbol);
-            for (int j=0;j<n;j++)
-                printf("%d ",frames[j]);
-            page_hits+=1;
-        }
-        else
-        {
-            index=(index+1)%n;
-            frames[index]=symbol;
-            page_miss+=1;
-            printf("\nSymbol: %d  Frame: ",symbol);
-            for (int j=0;j<n;j++)
-                printf("%d ",frames[j]);
-        }
-    }
-    printf("\nPage hits: %d",page_hits);
-    printf("\nPage misses: %d",page_miss);
-}
-
-//Main function
-int main(void)
-{
-    int string[]={7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
-    int no_frames=3;
-    int size=sizeof(string)/sizeof(int);
-    fifo(string,no_frames,size);
-    return 0;
+	int i,j,n,m,fnd,pg[100],fr[100],k=0,cnt=0;
+	printf("ENTER THE NUMBER OF PAGES : ");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		printf("ENTER THE PAGE NUMBER %d: ",i+1);
+		scanf("%d",&pg[i]);
+	}
+	printf("ENTER THE NUMBER OF FRAMES : ");
+	scanf("%d",&m);
+	for(i=0;i<m;i++)
+	{
+		fr[i]=-1;
+	}
+	printf("\n\tREFERENCE STRING\t PAGE NUMBER\t\t  STATUS\n");
+	for(i=0;i<n;i++)
+	{
+		fnd=0;
+		printf("\t\t%d\t\t",pg[i]);
+		for(j=0;j<m;j++)
+		{
+			if(fr[j]==pg[i])
+			{
+				fnd = 1;
+			}
+		}
+		if(fnd == 0)
+		{
+			fr[k] = pg[i];
+			k = (k+1)%m;
+			cnt++;
+		}
+		for(j=0;j<m;j++)
+		{
+			if(fr[j] != -1)
+			{
+				printf("%d   ",fr[j]);
+			}
+		}
+		if(fnd==1)
+		{
+			printf("\t\tHIT\n");
+		}
+		else
+		{
+			printf("\t\tMISS\n");
+		}
+	}
+	printf("\nPAGE FAULT : %d\n",cnt);
 }
 
 
-//lru
 
-#include<stdio.h>
 
-void lru(int string[20],int n,int size)
-{
-    //Creating array for block storage
-    int frames[n];
-    //Initializing each block with -1
-    for (int i=0;i<n;i++)
-        frames[i]=-1;
+/* OUTPUT
 
-    //Index to insert element
-    int index=-1;
+ENTER THE NUMBER OF PAGES : 5
+ENTER THE PAGE NUMBER 1: 1
+ENTER THE PAGE NUMBER 2: 2
+ENTER THE PAGE NUMBER 3: 3
+ENTER THE PAGE NUMBER 4: 2
+ENTER THE PAGE NUMBER 5: 5
+ENTER THE NUMBER OF FRAMES : 3
 
-    //Counters
-    int page_miss=0;
-    int page_hits=0;
+	REFERENCE STRING	 PAGE NUMBER		  STATUS
+					1						1   		 		 	   MISS
+					2						1   2   				 MISS
+					3						1   2   3   		 MISS
+					2						1   2   3   		 HIT
+					5						5   2   3   		 MISS
 
-    //Traversing each symbol in fifo
-    for (int i=0;i<size;i++)
-    {
-        int symbol=string[i];
-        int flag=0;
-
-        //To signal if array is full or not
-        int full=0;
-
-        for(int j=0;j<n;j++)
-        {
-            if (symbol==frames[j])
-            {
-                flag=1;
-                break;
-            }
-        }
-
-        if (flag==1)
-        {
-            printf("\nSymbol: %d  Frame: ",symbol);
-            for (int j=0;j<n;j++)
-                printf("%d ",frames[j]);
-            page_hits+=1;
-        }
-        else
-        {
-            //Frames are still empty
-            if (full==0)
-            {
-                index=(index+1)%n;
-                frames[index]=symbol;
-                page_miss+=1;
-                printf("\nSymbol: %d  Frame: ",symbol);
-                for (int j=0;j<n;j++)
-                    printf("%d ",frames[j]);
-            }
-
-            //Frames are full, now we can apply lru
-            else
-            {
-                //First find the index to replace with
-                int pos=999;
-                int index=-1;
-
-                //Traversing each symbol and checking their lru possibility
-                for(int j=0;j<n;j++)
-                {
-                    for (int k=0;k<size;k++)
-                    {
-                        if (frames[j]==string[k])
-                        {
-                            if (pos>k)
-                            {
-                                pos=k;
-                                index=j;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                //Now assign symbol in lru position
-                frames[index]=symbol;
-
-            }
-        }
-    }
-    printf("\nPage hits: %d",page_hits);
-    printf("\nPage misses: %d",page_miss);
-}
-
-//Main function
-int main(void)
-{
-    int string[]={7,0,1,2,0,3,0,4,2,3,0,3,2};
-    int no_frames=4;
-    int size=sizeof(string)/sizeof(int);
-    lru(string,no_frames,size);
-    return 0;
-}
+PAGE FAULT : 4
+*/
