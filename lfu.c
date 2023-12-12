@@ -1,75 +1,76 @@
 #include <stdio.h>
-
-int main()
+struct frame
 {
-    int f = 0, p = 0;
-    printf("Enter the number of frames: ");
-    scanf("%d", &f);
-    printf("Enter the number of pages: ");
-    scanf("%d", &p);
-
-    int frames[f], reference_string[p], frequency[f];
-
-    printf("Enter the reference string: ");
-    for (int i = 0; i < p; i++)
-        scanf("%d", &reference_string[i]);
-
-    for (int i = 0; i < f; i++)
+  int content;
+  int freq;
+  int cnt;
+}frames[100];
+void main()
+{
+  int i,j,pg,fr,cnt,pf,min,page[100],id=0;
+  printf("ENTER THE NUMBER OF PAGES : ");
+  scanf("%d",&pg);
+  printf("ENTER THE REFERENCING STRING : ");
+  for(i=0;i<pg;i++)
+  {
+    scanf("%d",&page[i]);
+  }
+  printf("ENTER THE NUMBER OF FRAMES : ");
+  scanf("%d",&fr);
+  for(i=0;i<fr;i++)
+  {
+    frames[i].content = -1;
+    frames[i].freq = 0;
+    frames[i].cnt = 0;
+  }
+  printf("\nREFERENCING PAGE\tSTATUS\t\tFRAME CONTENT\n\n");
+  for(pf=0,cnt=1,i=0;i<pg;i++)
+  {
+    printf("\t%d\t\t",page[i]);
+    for(j=0;j<fr;j++)
     {
-        frames[i] = -1;
-        frequency[i] = 0;
+      if(frames[j].content == page[i])
+      {
+        printf("HIT\t\t");
+        frames[j].freq++;
+        break;
+      }
     }
-
-    int hit = 0, miss = 0;
-
-    for (int i = 0; i < p; i++)
+    if(j == fr)
     {
-        int page = reference_string[i];
-        int flag = 0;
-
-        for (int k = 0; k < f; k++)
+      printf("MISS\t\t");
+      if(id<fr)
+      {
+        frames[id].content = page[i];
+        frames[id].freq++;
+        frames[id].cnt = cnt++;
+        id++;
+      }
+      else
+      {
+        for(min=0,j=0;j<fr;j++)
         {
-            if (frames[k] == page)
-            {
-                flag = 1;
-                hit++;
-                frequency[k]++;
-                break;
-            }
+          if(frames[min].freq > frames[j].freq)
+          {
+            min = j;
+          }
+          else if(frames[min].freq == frames[j].freq && frames[min].cnt > frames[j].cnt)
+          {
+            min = j;
+          }
         }
-
-        if (flag == 0)
-        {
-            int min_frequency = frequency[0];
-            int min_frequency_index = 0;
-
-            for (int k = 1; k < f; k++)
-            {
-                if (frequency[k] < min_frequency)
-                {
-                    min_frequency = frequency[k];
-                   
-
-  min_frequency_index = k;
-                }
-            }
-
-            frames[min_frequency_index] = page;
-            frequency[min_frequency_index] = 1;
-            miss++;
-        }
-
-        printf("Page frame: ");
-        for (int k = 0; k < f; k++)
-            printf("%d ", frames[k]);
-        printf("\n");
+        frames[min].content = page[i];
+        frames[min].freq = 1;
+        frames[min].cnt = cnt++;
+      }
+      pf++;
     }
-
-    printf("Number of hits: %d\n", hit);
-    printf("Number of misses: %d\n", miss);
-    printf("Hit ratio: %f\n", (float)hit / (float)p);
-    printf("Miss ratio: %f\n", (float)miss / (float)p);
-
-    return 0;
+    for(j=0;j<fr;j++)
+    {
+      if(frames[j].content !=-1)
+        printf("%d\t",frames[j].content);
+    }
+    printf("\n");
+  }
+  printf("\nTOTAL PAGE FAULT : %d\n",pf);
 }
-
